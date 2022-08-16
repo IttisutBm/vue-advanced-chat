@@ -87,52 +87,55 @@
 							<span>{{ textMessages.MESSAGE_DELETED }}</span>
 						</div>
 
-						<format-message
-							v-else-if="!message.files || !message.files.length"
-							:content="message.content"
-							:users="roomUsers"
-							:text-formatting="textFormatting"
-							:link-options="linkOptions"
-							@open-user-tag="openUserTag"
-						>
-							<template v-for="(i, name) in $scopedSlots" #[name]="data">
-								<slot :name="name" v-bind="data" />
-							</template>
-						</format-message>
+            <div v-else>
+              <slot name="custom-message-attachments" v-bind="{attachments:message.attachments}" />
+              <format-message
+                v-if="!message.files || !message.files.length"
+                :content="message.content"
+                :users="roomUsers"
+                :text-formatting="textFormatting"
+                :link-options="linkOptions"
+                @open-user-tag="openUserTag"
+              >
+                <template v-for="(i, name) in $scopedSlots" #[name]="data">
+                  <slot :name="name" v-bind="data" />
+                </template>
+              </format-message>
 
-						<message-files
-							v-else-if="!isAudio || message.files.length > 1"
-							:current-user-id="currentUserId"
-							:message="message"
-							:room-users="roomUsers"
-							:text-formatting="textFormatting"
-							:link-options="linkOptions"
-							:message-selection-enabled="messageSelectionEnabled"
-							@open-file="openFile"
-							@open-user-tag="openUserTag"
-						>
-							<template v-for="(i, name) in $scopedSlots" #[name]="data">
-								<slot :name="name" v-bind="data" />
-							</template>
-						</message-files>
+              <message-files
+                v-else-if="!isAudio || message.files.length > 1"
+                :current-user-id="currentUserId"
+                :message="message"
+                :room-users="roomUsers"
+                :text-formatting="textFormatting"
+                :link-options="linkOptions"
+                :message-selection-enabled="messageSelectionEnabled"
+                @open-file="openFile"
+                @open-user-tag="openUserTag"
+              >
+                <template v-for="(i, name) in $scopedSlots" #[name]="data">
+                  <slot :name="name" v-bind="data" />
+                </template>
+              </message-files>
 
-						<template v-else>
-							<audio-player
-								:message-id="message._id"
-								:src="message.files[0].url"
-								:message-selection-enabled="messageSelectionEnabled"
-								@update-progress-time="progressTime = $event"
-								@hover-audio-progress="hoverAudioProgress = $event"
-							>
-								<template v-for="(i, name) in $scopedSlots" #[name]="data">
-									<slot :name="name" v-bind="data" />
-								</template>
-							</audio-player>
+              <template v-else>
+                <audio-player
+                  :message-id="message._id"
+                  :src="message.files[0].url"
+                  :message-selection-enabled="messageSelectionEnabled"
+                  @update-progress-time="progressTime = $event"
+                  @hover-audio-progress="hoverAudioProgress = $event"
+                >
+                  <template v-for="(i, name) in $scopedSlots" #[name]="data">
+                    <slot :name="name" v-bind="data" />
+                  </template>
+                </audio-player>
 
-							<div v-if="!message.deleted" class="vac-progress-time">
-								{{ progressTime }}
-							</div>
-						</template>
+                <div v-if="!message.deleted" class="vac-progress-time">
+                  {{ progressTime }}
+                </div>
+              </template>
+            </div>
 
 						<div class="vac-text-timestamp">
 							<div
