@@ -120,7 +120,6 @@ export default {
 			selectedRoomId: ''
 		}
 	},
-
 	watch: {
 		rooms: {
 			deep: true,
@@ -157,7 +156,12 @@ export default {
 			}
 		}
 	},
-
+  mounted () {
+    let _this = this
+    setTimeout(function () {
+      return _this.initIntersectionObserver();
+    });
+  },
 	methods: {
 		initIntersectionObserver() {
 			if (this.observer) {
@@ -173,7 +177,6 @@ export default {
 					rootMargin: `${this.scrollDistance}px`,
 					threshold: 0
 				}
-
 				this.observer = new IntersectionObserver(entries => {
 					if (entries[0].isIntersecting) {
 						this.loadMoreRooms()
